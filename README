@@ -1,0 +1,40 @@
+MADLIB
+
+Java properties file with variable replacement.
+
+    Source: http://github.com/bigeasy/madlib/tree/master
+    Wiki: http://wiki.github.com/bigeasy/madlib
+
+    Issues and Tasks: http://github.com/bigeasy/madlib/issues
+
+    License: The MIT License
+
+    Contact: alan@blogometer.com
+
+    Used-By:
+        Java Cups:      http://github.com/bigeasy/cups
+        Prattle:        http://github.com/bigeasy/prattle
+
+PURPOSE
+
+1. An implementation of a common Java properties file enhancement.
+2. An implementation of a common variable subsitution pattern.
+
+Used in properties files.
+
+version: ${version}
+configuration: ${user.home}/.config
+
+Used in XML configuration files.
+
+<angle-brackets>
+    <version>${version}</version>
+    <configuration>${user.home}/.config</configuration>
+</angle-brackets>
+
+Madlib can help you read Log4J, Ant or Maven configuration files.
+
+MOTIVATION
+
+This format is found in Log4J, Ant and Maven. I wanted a configuraiton file for
+Prattle that was like Log4J. At the same time I needed a read Maven POM files.
