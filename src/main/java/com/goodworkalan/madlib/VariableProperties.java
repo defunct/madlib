@@ -3,13 +3,38 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+/**
+ * A decorator for a <code>Properties</code> map that will evaluate 
+ * 
+ * @author alan
+ *
+ */
 public class VariableProperties {
     /** The serial version id. */
     private static final long serialVersionUID = 1L;
     
     /** The underlying properties hash table. */
     private final Properties properties;
+    
+    /** Whether or not to also check JDNI for values. */
+    private final boolean naming;
 
+    /**
+     * Create a variable properties lookup with the given properties hash table.
+     * 
+     * @param properties
+     *            The properties.
+     * @param naming
+     *            Whether or not to also check JDNI for values.
+     */
+    public VariableProperties(Properties properties, boolean naming) {
+        this.properties = properties;
+        this.naming = naming;
+    }
+    
     /**
      * Create a variable properties lookup with the given properties hash table.
      * 
@@ -17,7 +42,7 @@ public class VariableProperties {
      *            The properties.
      */
     public VariableProperties(Properties properties) {
-        this.properties = properties;
+        this(properties, false);
     }
 
     /**
@@ -27,8 +52,7 @@ public class VariableProperties {
      *            A character immediately following a backslash.
      * @return The unescaped value for the backslash escape sequence.
      */
-    private final char unescape(char ch)
-    {
+    private final char unescape(char ch) {
         switch (ch) {
         case 'n': return '\n';
         case 'r': return '\r';
@@ -85,9 +109,7 @@ public class VariableProperties {
      */
     private String expand(String name, Set<String> seen) {
         if (seen.contains(name)) {
-            throw new IllegalStateException(
-                    "The property " + name + " references itself in " +
-                    "an infinate loop");
+            throw new IllegalStateException("The property " + name + " references itself in " + "an infinate loop");
         }
         seen.add(name);
 
@@ -95,7 +117,7 @@ public class VariableProperties {
 
         String value = properties.getProperty(name);
         if (value != null) {
-            expandValue(value, seen);
+            value = expandValue(value, seen);
         }
         return value;
     }
@@ -128,6 +150,16 @@ public class VariableProperties {
                 } else {
                     String subName = variable.toString();
                     String replace = System.getProperty(subName);
+                    if (replace == null && naming) {
+                        try {
+                            InitialContext context = new InitialContext();
+                            Object found = context.lookup(subName);
+                            if (found != null) {
+                                replace = found.toString();
+                            }
+                        } catch (NamingException e) {
+                        }
+                    }
                     if (replace == null) {
                         replace = expand(subName, seen);
                     }
