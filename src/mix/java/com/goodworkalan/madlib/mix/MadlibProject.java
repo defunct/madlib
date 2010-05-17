@@ -21,8 +21,8 @@ public class MadlibProject implements ProjectModule {
             .cookbook(JavaProject.class)
                 .produces("com.github.bigeasy.madlib/madlib/0.1.0.1")
                 .depends()
-                    .production("org.testng/testng-jdk15/5.10")
-                    .production("org.mockito/mockito-core/1.6")
+                    .development("org.testng/testng-jdk15/5.10")
+                    .development("org.mockito/mockito-core/1.6")
                     .end()
                 .end()
             .end();
