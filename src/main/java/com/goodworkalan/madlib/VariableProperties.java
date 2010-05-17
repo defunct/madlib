@@ -64,6 +64,9 @@ public class VariableProperties {
     }
     
     public String getValue(String value) {
+        if (value == null) {
+            return null;
+        }
         return expandValue(value, new HashSet<String>());
     }
 
